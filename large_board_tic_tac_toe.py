@@ -134,6 +134,9 @@ class RandomBoardTicTacToe:
 
         pygame.display.update()
         terminal = self.game_state.is_terminal()
+        if not terminal:
+            return 
+
         """ USE self.game_state.get_scores(terminal) HERE TO COMPUTE AND DISPLAY THE FINAL SCORES """
 
 
@@ -147,13 +150,25 @@ class RandomBoardTicTacToe:
             for j in range(len(self.board_state[i])):
                 self.board_state[i][j]=0
         self.thedisplay=pygame.display.set_mode(self.size)
+        self.play_game()
+        print('Check game reset')
+        
+
+    def play_game(self, mode = "player_vs_ai"):
+        done = False
+        
         pygame.init()
-        self.board_state = [[0 for i in range(3)] for i in range(3)]
+        # self.board_state = [[0 for i in range(3)] for i in range(3)]
         # prompt the player for choice: O is first, X goes second ALWAYS
         font = pygame.font.SysFont('arial', 32)
-        text = font.render('O always goes first, press [1] for O and [2] for X', True, self.BLACK, self.WHITE)
+        text = font.render('O always goes first, press', True, self.BLACK, self.WHITE)
         pygame.display.set_caption('Choose O or X')
         self.thedisplay.blit(text, (0, self.height // 2))
+        text = font.render(' [1] for O and [2] for X', True, self.BLACK, self.WHITE)
+        self.thedisplay.blit(text, (0, self.height // 2 + 40))
+        # game mode
+        text = font.render(f'Current game mode: {mode}', True, self.BLACK, self.WHITE)
+        self.thedisplay.blit(text, (0, self.height // 2 + 100))
         self.player_is = None
         pygame.display.update()
         while self.player_is == None:
@@ -166,17 +181,21 @@ class RandomBoardTicTacToe:
                     elif event.key == pygame.K_2:
                         self.player_is = True#  X
                         print('player is X')
+                    if event.key == pygame.K_m:
+                        if mode == 'player_vs_player':
+                            mode = 'player_vs_ai'
+                        else:
+                            mode = 'player_vs_player'
+                        pygame.draw.rect(self.thedisplay,self.BLACK,pygame.Rect(300, self.height // 2 + 100, 300, 40))
+                        pygame.display.update()
+                        text = font.render(f'Current game mode: {mode}', True, self.BLACK, self.WHITE)
+                        self.thedisplay.blit(text, (0, self.height // 2 + 100))
+                        pygame.display.update()
                 print('capture key press')
             print('check 0.5:',self.player_is)
         # input()
         self.game_state = GameStatus(self.board_state, self.player_is)
         self.draw_game()
-        self.play_game()
-        print('Check game reset')
-        
-
-    def play_game(self, mode = "player_vs_ai"):
-        done = False
 
         clock = pygame.time.Clock()
         pygame.display.update()
