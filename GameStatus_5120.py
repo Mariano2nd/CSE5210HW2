@@ -193,11 +193,12 @@ class GameStatus:
 		cols = len(self.board_state[0])
 
 		# Loop through board_state and add empty cells to moves
-		for i in rows:
-			for j in cols:
+		for i in range(rows):
+			for j in range(cols):
 				if self.board_state[i][j] == 0:
-					moves.append(self.board_state[i][j])
-
+					moves.append((i,j,self.board_state[i][j]))
+		# print(moves)
+		# input()
 		return moves
 
 
@@ -206,3 +207,5 @@ class GameStatus:
 		x, y = move[0], move[1]
 		new_board_state[x][y] = 1 if self.turn_O else -1# -1 is X, 1 is O
 		return GameStatus(new_board_state, not self.turn_O)
+
+
