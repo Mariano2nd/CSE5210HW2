@@ -244,6 +244,8 @@ class RandomBoardTicTacToe:
                     text = font.render('Game is Over', True, self.BLACK, self.WHITE)
                     pygame.display.set_caption('Game Over')
                     self.thedisplay.blit(text, (self.width // 2, self.height // 2))
+                    text = font.render(f'Score is {self.game_state.get_scores(True)}', True, self.BLACK, self.WHITE)
+                    self.thedisplay.blit(text, (self.width // 2, self.height // 2 + 50))
                     text = font.render(f'Restart board press [R]', True, self.BLACK, self.WHITE)
                     self.thedisplay.blit(text, (0, self.height // 2 + 100))
                     if event.type == pygame.KEYUP:
