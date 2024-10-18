@@ -6,7 +6,7 @@ class GameStatus:
 
 	def __init__(self, board_state, turn_O):
 
-		self.board_state = board_state
+		self.board_state = board_state.copy()
 		self.turn_O = turn_O
 		self.oldScores = 0
 
@@ -195,15 +195,19 @@ class GameStatus:
 		# Loop through board_state and add empty cells to moves
 		for i in range(rows):
 			for j in range(cols):
-				if self.board_state[i][j] == 0:
-					moves.append((i,j,self.board_state[i][j]))
+				if self.board_state[i][j] != 0:
+					moves.append((i,j))
 		# print(moves)
-		# input()
 		return moves
 
 
 	def get_new_state(self, move):
-		new_board_state = self.board_state.copy()
+		new_board_state = []
+		for i in self.board_state:
+			row = []
+			for j in i:
+				row.append(j)
+			new_board_state.append(row)
 		x, y = move[0], move[1]
 		new_board_state[x][y] = 1 if self.turn_O else -1# -1 is X, 1 is O
 		return GameStatus(new_board_state, not self.turn_O)
