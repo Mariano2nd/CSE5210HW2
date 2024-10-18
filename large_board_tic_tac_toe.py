@@ -73,7 +73,7 @@ class RandomBoardTicTacToe:
             for col in range(self.GRID_SIZE):
                 pygame.draw.rect(self.screen,self.WHITE,pygame.Rect((self.WIDTH+self.MARGIN)*row+self.MARGIN,(self.HEIGHT+self.MARGIN)*col+self.MARGIN,self.WIDTH-self.MARGIN,self.HEIGHT-self.MARGIN))
                 
-        print('Check game board')
+        #print('check game board')
         # pygame.display.update()
         
     def change_turn(self):
@@ -82,10 +82,10 @@ class RandomBoardTicTacToe:
         else:
             pygame.display.set_caption(f"Tic Tac Toe - X's turn {'' if self.mode == 'player_vs_player' else '(click for ai)'}")
         # print('Check before changing turn O',self.game_state.turn_O)
-        # input()
+        # #input()
         # self.game_state.turn_O = not self.game_state.turn_O
         # print('Check after changing turn O',self.game_state.turn_O)
-        # input()
+        # #input()
 
 
     def draw_circle(self, x, y):
@@ -97,7 +97,7 @@ class RandomBoardTicTacToe:
         radius = self.WIDTH // 3
         pygame.draw.circle(self.screen,self.CIRCLE_COLOR,center,radius,5)
         print('Check draw circle')
-        # input()
+        # #input()
         # pygame.display.update()
 
     def draw_cross(self, x, y):
@@ -119,13 +119,14 @@ class RandomBoardTicTacToe:
         YOUR RETURN VALUE SHOULD BE TRUE OR FALSE TO BE USED IN OTHER PARTS OF THE GAME
         """
         game_over = self.game_state.is_terminal()
-        print('Check game over')
+        #print('Check game over')
         return game_over
     
 
     def move(self, move):
         print('Check move')
         self.game_state = self.game_state.get_new_state(move)
+        print("game state",self.game_state.board_state)
 
 
     def play_ai(self):
@@ -138,15 +139,15 @@ class RandomBoardTicTacToe:
         NUMBER AND MOVE IS AN X,Y LOCATION RETURNED BY THE AGENT
         """
         print('Check play ai')
-
+        tempgamestate = self.game_state
         if mode == "player_vs_ai":
-            print('minmax value: ',minimax(self.game_state, 2, True))
-            score, move = minimax(self.game_state, 4, True)
+            score, move = minimax(tempgamestate, 4, True)
+            print('minmax value: ',score,move)
         elif mode == "negamax":
-            print('negamax value: ', negamax(self.game_state, 2, True))
-            score, move = negamax(self.game_state, 4, True)
-        print('ai move',move)
-        return move[0:2]
+            score, move = negamax(tempgamestate, 4, True)
+            print('negamax value: ', score,move)
+        print('ai move',move, 'and score is',score)
+        return move
 
         """ USE self.game_state.get_scores(terminal) HERE TO COMPUTE AND DISPLAY THE FINAL SCORES """
 
@@ -208,9 +209,9 @@ class RandomBoardTicTacToe:
                         text = font.render(f'Current game mode: {self.mode}', True, self.BLACK, self.WHITE)
                         self.thedisplay.blit(text, (0, self.height // 2 + 100))
                         pygame.display.update()
-                print('capture key press')
-            print('check 0.5:',self.player_is)
-        # input()
+                #print('capture key press')
+            #print('check 0.5:',self.player_is)
+        # #input()
         self.game_state = GameStatus(self.board_state, True)
         self.draw_game()
 
@@ -218,25 +219,24 @@ class RandomBoardTicTacToe:
         pygame.display.update()
         
 
-        print('Check1')
+        #print('check1')
         while not done:
-            print('Check2',self.game_state.turn_O)
+            #print('check2',self.game_state.turn_O)
             for event in pygame.event.get():  # User did something
                 """
                 YOUR CODE HERE TO CHECK IF THE USER CLICKED ON A GRID ITEM. EXIT THE GAME IF THE USER CLICKED EXIT
                 """
-                print('Check3')
+                #print('check3')
                 if event.type == pygame.QUIT:
-                    print('check3.1')
+                    #print('check3.1')
                     done = True
                 """
                 YOUR CODE HERE TO HANDLE THE SITUATION IF THE GAME IS OVER. IF THE GAME IS OVER THEN DISPLAY THE SCORE,
                 THE WINNER, AND POSSIBLY WAIT FOR THE USER TO CLEAR THE BOARD AND START THE GAME AGAIN (OR CLICK EXIT)
                 """
-                print('check4')
+                #print('check4')
                 # TODOs: (1) Display "Game is Over" (2) Display the score (3) Display the Winner -> "Black" or "White"
                 #   (4) Display functional options/buttons to "Play Again" or (5) "Exit"
-                
                 
                 if self.is_game_over():
                     # (4) & (5)
@@ -249,7 +249,7 @@ class RandomBoardTicTacToe:
                     if event.type == pygame.KEYUP:
                         if self.is_game_over() and event.key == pygame.K_r:
                             print("Check reset board")
-                            # input()
+                            # #input()
                             self.game_reset()
                             self.reset_true = True
                             print('1 reset_true?',self.reset_true)
@@ -264,13 +264,13 @@ class RandomBoardTicTacToe:
                 DRAW CROSS (OR NOUGHT DEPENDING ON WHICH SYMBOL YOU CHOSE FOR YOURSELF FROM THE gui) AND CALL YOUR 
                 PLAY_AI FUNCTION TO LET THE AGENT PLAY AGAINST YOU
                 """
-                print('check5')
+                #print('check5')
                 if event.type == pygame.MOUSEBUTTONUP:
                     # Get the position
                     x, y = pygame.mouse.get_pos()
                     
                     # Change the x/y screen coordinates to grid coordinates
-                    print('WIDTH ', self.WIDTH, ' and HEIGHT ', self.HEIGHT)
+                    # print('WIDTH ', self.WIDTH, ' and HEIGHT ', self.HEIGHT)
                     pos_x = int(x / (self.WIDTH + self.MARGIN))
                     pos_y = int(y / (self.HEIGHT + self.MARGIN))
                     
@@ -279,36 +279,52 @@ class RandomBoardTicTacToe:
                     # 2 - Then draw the symbol for your opponent in the selected cell
                     # xx- Within this code portion, continue checking if the game has ended by using is_terminal function
                     # 3 - check if move exists
-
-                    # 1 - write move onto board from ai or player
-                    print('player pos x and y', pos_x, pos_y)
-                    # if ai's turn write move
-                    if self.mode == 'player_vs_ai':
-                        print('check for ai turn')
-                        if self.player_is != self.game_state.turn_O:
-                            print('\tai''s turn')
-                            pos_x, pos_y = self.play_ai()
-                            print('This is the position of the AI', pos_x, 'and ', pos_y)
-                            input()
-                    # otherwise write player's move
-
-
                     # 3 - check if move exists
-                    if not (pos_x,pos_y,0) in self.game_state.get_moves():
-                        print('O' if self.game_state.turn_O else 'X',' must choose a different move')
-                        pygame.display.set_caption(f"{'O' if self.game_state.turn_O else 'X'} - must choose a different move")
+                    if (pos_x,pos_y) in self.game_state.get_moves():
+                        # print('O' if self.game_state.turn_O else 'X',' must choose a different move')
+                        # pygame.display.set_caption(f"{'O' if self.game_state.turn_O else 'X'} - must choose a different move")
                         continue# do not overwrite existing move
 
+
+
                     # 2 - draw respective symbol
-                    print("Check 2 of pos_x and pos_y:", pos_x, pos_y)
+                    # print("Check 2 of pos_x and pos_y:", pos_x, pos_y)
                     if self.game_state.turn_O:
                         self.draw_circle(pos_x, pos_y)
                     else:
                         self.draw_cross(pos_x, pos_y)
-                    # input()
+                    # #input()
                     self.move([pos_x, pos_y])
                     self.change_turn()
 
+                    # 1 - write move onto board from ai or player
+                    # print('player pos x and y', pos_x, pos_y)
+                    # if ai's turn write move
+                    print('is it ais turn?')
+                    if self.mode == 'player_vs_ai' and not self.game_state.is_terminal():
+                        print('check for ai turn',self.game_state.is_terminal())
+                        if self.player_is != self.game_state.turn_O:
+                            # print("game state before AI →", self.game_state.board_state)
+                            print('\tai''s turn')
+
+                            pos_x, pos_y = self.play_ai()
+                            # print('position x and y →',pos_x,pos_y)
+                            # print("game state after AI →", self.game_state.board_state)
+                            for i in self.game_state.board_state:
+                                for j in i:
+                                    print(j)
+                            #input()
+                    # otherwise write player's move
+
+                            # 2 - draw respective symbol
+                            # print("Check 2 of pos_x and pos_y:", pos_x, pos_y)
+                            if self.game_state.turn_O:
+                                self.draw_circle(pos_x, pos_y)
+                            else:
+                                self.draw_cross(pos_x, pos_y)
+                            # #input()
+                            self.move([pos_x, pos_y])
+                            self.change_turn()
 
                     
                     
