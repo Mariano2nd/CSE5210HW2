@@ -205,7 +205,6 @@ class RandomBoardTicTacToe:
         w = self.width
         h = self.height
         #MENU SECTION
-       
         self.selmode_button = pygame.Rect((self.width/2) + 2.5, (self.height/4)+160, 200, 50)
         self.exit_button  = pygame.Rect(5, 5, 75, 40)
         self.play_button = pygame.Rect((self.width/2) +2.5 , (self.height/4), 200, 150)
@@ -280,7 +279,6 @@ class RandomBoardTicTacToe:
                             play_vs_rect = play_vs_TS.get_rect(center = self.play_vs.center)
                             self.screen.blit(play_vs_TS, play_vs_rect)
 
-                            
                         elif mode == 'player_vs_ai' :
                             self.mode = 'negamax'
                             pygame.draw.rect(self.screen, self.CROSS_COLOR, self.play_vs, width = 0 , border_radius = 3)
@@ -298,6 +296,7 @@ class RandomBoardTicTacToe:
                         print(self.mode)
                     if self.exit_button.collidepoint(event.pos):
                         pygame.quit()
+                        return
                     if self.play_as_button.collidepoint(event.pos):
                         if self.player_is == True:
                             self.player_is = False
@@ -345,19 +344,17 @@ class RandomBoardTicTacToe:
                         self.play = True
 
                 mode = self.mode
-
+                TurnPlayer = self.player_is
+                TurnBot = not self.player_is
             
               
-              
-                pygame.display.update()
+                if pygame.get_init():
+                    pygame.display.update()
 
                 #print('capture key press')
             #print('check 0.5:',self.player_is)
         # #input()
         self.board_state = [[0 for i in range(self.GRID_SIZE)] for i in range(self.GRID_SIZE)]
-        for i in self.board_state:
-            for j in i:
-                print(j)
         self.WIDTH = self.size[0]/self.GRID_SIZE - self.OFFSET
         self.HEIGHT = self.size[1]/self.GRID_SIZE - self.OFFSET
         self.game_state = GameStatus(self.board_state, True)
@@ -421,11 +418,17 @@ class RandomBoardTicTacToe:
                 DRAW CROSS (OR NOUGHT DEPENDING ON WHICH SYMBOL YOU CHOSE FOR YOURSELF FROM THE gui) AND CALL YOUR 
                 PLAY_AI FUNCTION TO LET THE AGENT PLAY AGAINST YOU
                 """
+       
+               
+                print(self.game_state.turn_O)
                 #print('check5')
-                if self.player_is == self.game_state.turn_O or self.mode == 'player_vs_player': #if the player is a circle, go first, if not play ai first, if pvp then keep doing the interaciton loop
+                if TurnPlayer == True and self.mode == 'player_vs_ai': #if the player is a circle, go first, if not play ai first, if pvp then keep doing the interaciton loop
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         print("HERE")
                         # Get the position
+
+                        self.game_state.turn_O = False
+                  
                         x, y = pygame.mouse.get_pos()
                         print(self.WIDTH)
                         
@@ -446,27 +449,88 @@ class RandomBoardTicTacToe:
                             # pygame.display.set_caption(f"{'O' if self.game_state.turn_O else 'X'} - must choose a different move")
                             continue# do not overwrite existing move
 
-
+                     
 
                         # 2 - draw respective symbol
                         # print("Check 2 of pos_x and pos_y:", pos_x, pos_y)
-                        if self.game_state.turn_O:
+                      
+                        if self.player_is == True:
                             self.draw_circle(pos_x, pos_y)
                         else:
                             self.draw_cross(pos_x, pos_y)
                         # #input()
+                       
+
+                        print(self.game_state.turn_O)
                         self.move([pos_x, pos_y])
+                        
                         self.change_turn()
+                        TurnBot = True
+                        TurnPlayer = False
 
                         # 1 - write move onto board from ai or player
                         # print('player pos x and y', pos_x, pos_y)
                         # if ai's turn write move
                         print('is it ais turn?')
                         print(self.mode)
-                if self.player_is != self.game_state.turn_O and self.mode != 'player_vs_player':    
+                if TurnPlayer == True and self.mode == 'negamax': #if the player is a circle, go first, if not play ai first, if pvp then keep doing the interaciton loop
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        print("HERE")
+                        # Get the position
+                        if self.player_is == False: 
+                            self.game_state.turn_O = False
+                        else:
+                            self.game_state.turn_O = True
+                  
+                        x, y = pygame.mouse.get_pos()
+                        print(self.WIDTH)
+                        
+                        
+                        # Change the x/y screen coordinates to grid coordinates
+                        # print('WIDTH ', self.WIDTH, ' and HEIGHT ', self.HEIGHT)
+                        pos_x = int(x / (self.WIDTH + self.MARGIN))
+                        pos_y = int(y / (self.HEIGHT + self.MARGIN))
+                        
+                        # 1 - Check if the game is human vs human or human vs AI player from the GUI. 
+                        # If it is human vs human then your opponent should have the value of the selected cell set to -1
+                        # 2 - Then draw the symbol for your opponent in the selected cell
+                        # xx- Within this code portion, continue checking if the game has ended by using is_terminal function
+                        # 3 - check if move exists
+                        # 3 - check if move exists
+                        if (pos_x,pos_y) in self.game_state.get_moves():
+                            # print('O' if self.game_state.turn_O else 'X',' must choose a different move')
+                            # pygame.display.set_caption(f"{'O' if self.game_state.turn_O else 'X'} - must choose a different move")
+                            continue# do not overwrite existing move
+
+                     
+
+                        # 2 - draw respective symbol
+                        # print("Check 2 of pos_x and pos_y:", pos_x, pos_y)
+                      
+                        if self.player_is == True:
+                            self.draw_circle(pos_x, pos_y)
+                        else:
+                            self.draw_cross(pos_x, pos_y)
+                        # #input()
+                       
+
+                        print(self.game_state.turn_O)
+                        self.move([pos_x, pos_y])
+                        
+                        self.change_turn()
+                        TurnBot = True
+                        TurnPlayer = False
+
+                        # 1 - write move onto board from ai or player
+                        # print('player pos x and y', pos_x, pos_y)
+                        # if ai's turn write move
+                        print('is it ais turn?')
+                        print(self.mode)
+                if TurnBot == True and self.mode != 'player_vs_player':  
                     if not self.game_state.is_terminal():
                         print('check for ai turn',self.game_state.is_terminal())
-                     
+                        if self.player_is == False:
+                            self.game_state.turn_O = True
                         # print("game state before AI →", self.game_state.board_state)
                         print('\tai''s turn')
 
@@ -478,17 +542,70 @@ class RandomBoardTicTacToe:
                                 print(j)
                             #input()
                     # otherwise write player's move
-
                             # 2 - draw respective symbol
                             # print("Check 2 of pos_x and pos_y:", pos_x, pos_y)
-                        if self.game_state.turn_O:  
+                      
+                        if self.player_is == False:  
                             self.draw_circle(pos_x, pos_y)
                         else:
                             self.draw_cross(pos_x, pos_y)
                             # #input()
                         self.move([pos_x, pos_y])
+            
                         self.change_turn()
+                        TurnBot = False
+                        TurnPlayer = True
                         pygame.display.update
+                if self.mode == 'player_vs_player': #if the player is a circle, go first, if not play ai first, if pvp then keep doing the interaciton loop
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        print("HERE")
+                        # Get the position
+
+                       
+                  
+                        x, y = pygame.mouse.get_pos()
+                        print(self.WIDTH)
+                        
+                        
+                        # Change the x/y screen coordinates to grid coordinates
+                        # print('WIDTH ', self.WIDTH, ' and HEIGHT ', self.HEIGHT)
+                        pos_x = int(x / (self.WIDTH + self.MARGIN))
+                        pos_y = int(y / (self.HEIGHT + self.MARGIN))
+                        
+                        # 1 - Check if the game is human vs human or human vs AI player from the GUI. 
+                        # If it is human vs human then your opponent should have the value of the selected cell set to -1
+                        # 2 - Then draw the symbol for your opponent in the selected cell
+                        # xx- Within this code portion, continue checking if the game has ended by using is_terminal function
+                        # 3 - check if move exists
+                        # 3 - check if move exists
+                        if (pos_x,pos_y) in self.game_state.get_moves():
+                            # print('O' if self.game_state.turn_O else 'X',' must choose a different move')
+                            # pygame.display.set_caption(f"{'O' if self.game_state.turn_O else 'X'} - must choose a different move")
+                            continue# do not overwrite existing move
+
+                     
+
+                        # 2 - draw respective symbol
+                        # print("Check 2 of pos_x and pos_y:", pos_x, pos_y)
+                      
+                        if self.game_state.turn_O:
+                            self.draw_circle(pos_x, pos_y)
+                        else:
+                            self.draw_cross(pos_x, pos_y)
+                        # #input()
+                       
+
+                        print(self.game_state.turn_O)
+                        self.move([pos_x, pos_y])
+                        
+                        self.change_turn()
+                        
+
+                        # 1 - write move onto board from ai or player
+                        # print('player pos x and y', pos_x, pos_y)
+                        # if ai's turn write move
+                        print('is it ais turn?')
+                        print(self.mode)
                  
                     
                 
@@ -509,7 +626,7 @@ class RandomBoardTicTacToe:
         pygame.quit()
 
 tictactoegame = RandomBoardTicTacToe()
-tictactoegame.play_game()
+# tictactoegame.play_game()
 
 
 
